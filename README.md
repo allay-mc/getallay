@@ -15,5 +15,5 @@ following options:
 
 - **Configure the script**: The script works with environment variables in case your platform got detected
   falsly. Read the script's documentation to find out which environment variables are what they do.
-- **Download the appropiate archive**: <https://github.com/phoenixr-codes/playground/releases/>
+- **Download the appropiate archive**: <https://github.com/allay-mc/allay/releases/>
 - **Cargo**: `cargo install allay`
