@@ -2,10 +2,6 @@
 
 Allay can be installed by using the command below:
 
-> [!Warning]
-> Because Allay has no stable release yet, the command below will
-> not work.
-
 ```console
 curl https://allay-mc.github.io/getallay/getallay.sh -sSf | sh
 ```
