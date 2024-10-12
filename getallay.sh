@@ -182,9 +182,33 @@ log() {
   ## Low-level implementation for logging.
   ##
   ## @param $1  The label displayed in front of the message.
-  ## @param $1  The message to display.
-  
-  printf "[%s] %s\n" "$1" "$2"
+  ## @param $2  The color to use for the label.
+  ## @param $2  The message to display.
+
+  case "$2" in
+    "red")
+      local ansi="41"
+      ;;
+    "green")
+      local ansi="42"
+      ;;
+    "yellow")
+      local ansi="43"
+      ;;
+    "blue")
+      local ansi="44"
+      ;;
+    "magenta")
+      local ansi="45"
+      ;;
+    "cyan")
+      local ansi="46"
+      ;;
+    "white")
+      local ansi="47"
+      ;;
+  esac
+  printf "\e[%sm %s \e[0m %s\n" "$ansi" "$1" "$3"
 }
 
 log_error() {
@@ -192,7 +216,7 @@ log_error() {
   ##
   ## @param $1  The message to display.
   
-  log "ERROR" "$1"
+  log "ERROR" "red" "$1"
 }
 
 log_warning() {
@@ -200,7 +224,7 @@ log_warning() {
   ##
   ## @param $1  The message to display.
   
-  log "WARNING" "$1"
+  log "WARNING" "yellow" "$1"
 }
 
 log_info() {
@@ -208,7 +232,15 @@ log_info() {
   ##
   ## @param $1  The message to display.
   
-  log "INFO" "$1"
+  log "INFO" "cyan" "$1"
+}
+
+log_success() {
+  ## Logs a success to the console.
+  ##
+  ## @param $1  The message to display.
+
+  log "SUCCESS" "green" "$1"
 }
 
 calculate_archive_extension() {
