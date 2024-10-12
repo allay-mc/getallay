@@ -35,9 +35,6 @@ GETALLAY_CPUTYPE="${GETALLAY_CPUTYPE:-}"
 GETALLAY_PLATFORM="${GETALLAY_PLATFORM:-}"
 ## Specify the platform (e.g. `aarch64-unknown-linux-gnu`).
 
-GETALLAY_TMPDIR="${GETALLAY_TMPDIR:-.}"
-## Specify the directory where the content should be extracted.
-
 GETALLAY_VERSION="${GETALLAY_VERSION:-latest/download}"
 ## Specify the version of Allay to install. For specifix version, use `download/X.Y.Z`.
 
@@ -48,15 +45,31 @@ GETALLAY_ARCHIVE_PREFIX="${GETALLAY_ARCHIVE_PREFIX:-allay}"
 
 GETALLAY_EXECUTABLE_NAME="${GETALLAY_EXECUTABLE_NAME:-allay}"
 
+GETALLAY_BIN_PATH="${GETALLAY_BIN_PATH:-$HOME/.local/bin/}"
+
 main() {
   ## The main program.
 
+  if [ "$0" = "uninstall" ]; then
+    uninstall_allay
+  else
+    install_allay
+  fi
+}
+
+uninstall_allay() {
+  panic "Uninstalling is not yet supported"
+}
+
+install_allay() {
   local platform
   local archive_ext
   local url
   local path
   local dest
   local exe_ext
+
+  # TODO: check if allay is already installed
 
   platform="$GETALLAY_PLATFORM"
   if [ -z "$platform" ]; then  
@@ -66,7 +79,7 @@ main() {
   log_info "Your platform is: $platform"
   
   if ! supported "$platform"; then
-    panic "Your platform is not supported; install it manually"
+    panic "Your platform is not supported; install it manually (https://allay-mc.github.io/allay/installation.html)"
   fi
 
   calculate_archive_extension "$platform"
@@ -75,7 +88,7 @@ main() {
   calculate_executable_extension "$platform"
   exe_ext="$RESULT"
 
-  path="$GETALLAY_TMPDIR/allay-$platform"
+  path="$TMPDIR/allay-$platform"
   dest="./tmp-allay-$platform"
   url="${GETALLAY_BASE_URL}/${GETALLAY_VERSION}/${GETALLAY_ARCHIVE_PREFIX}-${platform}.${archive_ext}"
 
@@ -105,15 +118,14 @@ main() {
       ;;
   esac
 
-  ensure mv "$dest"/*/"${GETALLAY_EXECUTABLE_NAME}${exe_ext}" .
+  ignore mkdir "$GETALLAY_BIN_PATH"
+  installed_at="$GETALLAY_BIN_PATH"/"${GETALLAY_EXECUTABLE_NAME}${exe_ext}"
+  ensure mv "$dest"/*/"${GETALLAY_EXECUTABLE_NAME}${exe_ext}"  "$installed_at"
   ignore rm "$path" # archive
   ignore rm -rf "$dest" # extracted archive
 
-  log_info "Successfully installed Allay" # TODO: tell path
+  log_success "Successfully installed Allay to $installed_at"
   log_info "Thank you!"
-
-  # shellcheck disable=SC2016
-  log_info 'Make sure to add the path of the executable to your $PATH'
 
   return 0
 }
